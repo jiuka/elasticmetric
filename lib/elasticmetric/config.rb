@@ -15,7 +15,11 @@ class ElasticMetric
     }
 
     def self.[](key)
-      _config[key]
+      value = _config
+      key.split('.').each do |k|
+        value = value[k]
+      end
+      value
     end
 
     def self.load(file=nil)

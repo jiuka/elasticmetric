@@ -13,9 +13,15 @@ class ElasticMetric
       @name = self.class.name
       @name.slice! 'ElasticMetric::Plugin::'
       ElasticMetric::Logging::info(@name) { "Plugin initialize" }
+      config
       @thread = Thread.new do
         run
       end
+    end
+
+    def config
+      @config = ElasticMetric::Config["plugin.#{@name.downcase}"]
+      puts @config
     end
 
     # This function must be provided by plugin to collect the actual data

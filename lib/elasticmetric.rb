@@ -62,7 +62,13 @@ class ElasticMetric
 
   private
   def _configReload
-    ElasticMetric::Config.load
+    ElasticMetric::Config.load(@options)
+    if @sender
+      @sender.config
+    end
+    if @plugins
+      @plugins.each { |n,p| p.config }
+    end
   end
 
   def _loadPlugins
