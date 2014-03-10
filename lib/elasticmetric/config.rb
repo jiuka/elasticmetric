@@ -23,9 +23,9 @@ class ElasticMetric
       value
     end
 
-    def self.load(file=nil)
-      if file
-        @@config_file = File.absolute_path file
+    def self.load(options={})
+      if options[:configfile]
+        @@config_file = File.absolute_path options[:configfile]
       else
         @@config_files.each do |f|
           if File.exist?(f)
@@ -47,6 +47,11 @@ class ElasticMetric
       ElasticMetric::Logging.info "Load config file #{@@config_file}"
 
       @@config = @@defaultconfig.merge YAML::load(File.open(@@config_file))
+
+      # Override config with the command line options
+      options.each do |key,value|
+        @@config[key.to_s] = value
+      end
     end
 
     private

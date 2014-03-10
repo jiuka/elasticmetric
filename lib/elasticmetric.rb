@@ -2,6 +2,7 @@ require 'json'
 require 'socket'
 require 'date'
 require 'daemons'
+require 'elasticmetric/plugin'
 require 'elasticmetric/config'
 require 'elasticmetric/logging'
 require 'elasticmetric/send'
@@ -9,6 +10,11 @@ require 'elasticmetric/send'
 class ElasticMetric
 
   def initialize
+
+    # Parse Options
+    @options = {}
+    _optParse
+
     ElasticMetric::Logging::info "Initialite ElasticMetric"
 
     # Load Configuration
@@ -72,6 +78,37 @@ class ElasticMetric
   end
 
   private
+  def _optParse
+    OptionParser.new do |opts|
+      opts.banner = "Usage: #{$0} [options]"
+
+      opts.on("-v", "--[no-]verbose", "Run verbosely") do |v|
+        @options[:verbose] = v
+      end
+
+      opts.on('-c', '--config FILE', 'Use the named config file.') do |c|
+        @options[:configfile] = c
+      end
+
+      opts.on('-d', '--[no-]daemonize', 'Run as a daemon.') do |d|
+        @options[:daemonize] = d
+      end
+
+      opts.on('--url URL', 'URL to send the config to') do |url|
+        @options[:url] = url
+      end
+
+      opts.on('--plugindir DIR', 'Directory to load plugins from') do |plugindir|
+        @options[:plugindir] = plugindir
+      end
+
+      opts.on_tail("-h", "--help", "Show this message") do
+        puts opts
+        exit
+      end
+    end.parse!
+  end
+
   def _configReload
     ElasticMetric::Config.load(@options)
     if @sender
