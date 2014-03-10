@@ -1,6 +1,7 @@
 require 'json'
 require 'socket'
 require 'date'
+require 'daemons'
 require 'elasticmetric/config'
 require 'elasticmetric/logging'
 require 'elasticmetric/send'
@@ -12,6 +13,16 @@ class ElasticMetric
 
     # Load Configuration
     _configReload
+
+    # Daemonize
+    pwd = Dir.pwd
+    Daemons.daemonize({
+      :ontop    => !ElasticMetric::Config['daemonize'],
+      :app_name => 'elasticmetric'
+    })
+    Dir.chdir(pwd)
+
+    # Load Plugins
     _loadPlugins
 
     @sender = ElasticMetric::Send.new

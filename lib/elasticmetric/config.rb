@@ -9,7 +9,8 @@ class ElasticMetric
     ]
     @@config_file = nil
     @@defaultconfig = {
-      'url'       => 'http://localhost:9200/elasticmetric/',
+      'daemonize' => true,
+      'url'       => 'http://localhost:9200/elasticmetric/post',
       'plugindir' => 'plugins',
       'plugin'    => {}
     }
