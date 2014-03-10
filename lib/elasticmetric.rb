@@ -18,12 +18,16 @@ class ElasticMetric
 
     # Signal Handling
     Signal.trap('TERM') do
-      ElasticMetric::Logging::info "Initialise shutdown"
-      @running = false
+      Thread.new do
+        ElasticMetric::Logging::info "Initialise shutdown"
+        @running = false
+      end
     end
     Signal.trap('HUP') do
-      ElasticMetric::Logging::info "Reload configuration"
-      ElasticMetric::Config.load
+      Thread.new do
+        ElasticMetric::Logging::info "Reload configuration"
+        _configReload
+      end
     end
   end
 
